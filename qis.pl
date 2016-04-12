@@ -9,7 +9,7 @@ my $mech = WWW::Mechanize->new();
 
 $mech->get("https://qisweb.hispro.de/tel/rds?state=user&type=0");
 my $bn="93211";
-my $pw="B0st0N!";
+my $pw="st0N!";
 
 BEGIN {$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;}
 
