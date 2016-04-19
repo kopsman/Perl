@@ -1,15 +1,20 @@
 #!/usr/local/perls/perl-5.20.0/bin/perl
 
+#use strict;
+use warnings;
 use WWW::Mechanize;
-use LWP;
+use LWP::UserAgent;
 use HTML::TableExtract;
 use Data::Dumper;
+use WWW::PushBullet;
+    
+ 
 
 my $mech = WWW::Mechanize->new();
 
 $mech->get("https://qisweb.hispro.de/tel/rds?state=user&type=0");
 my $bn="93211";
-my $pw="xxx";
+my $pw="B0s";
 
 BEGIN {$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;}
 
@@ -60,13 +65,90 @@ foreach my $ts ($te->tables) {
 @list = @list[4 .. $#list];
 splice @list, -2;
 
+#TEST ->neues Modul on Hand hinzufügen!!!
+
+
 #print join("\n", @list[3..$#list]), $/;
 
 
 
 my %daten = @list;
+#Anzahl der Hasheinträge
+my $numKeys = keys(%daten);
+my @Keys = keys(%daten);
 #print "Hash: \n\n\n\n\n";
-print Dumper \%daten;
+#print Dumper \%daten;
+print "Anzahl Einträge: $numKeys \n";
+#print "@list";
+#print $daten{"IT-Projektmanagement"};
+
+#sub del_double{
+#my %all=();
+#@all{@_}=1;
+#return (keys %all);
+#}
+
+#@l2=&del_double(@l);
+
+
+
+
+foreach (@Keys){
+	print "Exists: $_ - $daten{$_}\n" if exists $daten{$_};	
+}
+
+#print "\n\n";
+
+#foreach (@l2){
+#	print "$_ \n";	
+#}
+
+# Noten aus txt-file lesen
+#open (DATEI, "/Users/manni/Documents/qis_old.txt") or die $!;
+#   my @old_daten = <DATEI>;
+#close (DATEI);
+
+#print Dumper @old_daten; 
+
+
+
+# Noten in txt-file schreiben
+open (DATEI, ">/Users/manni/Documents/qis_old.txt") or die $!;
+   #print DATEI map { "$_ => $daten{$_}\n" } keys %daten;
+   #print DATEI @keys;
+	foreach (@Keys){
+		print DATEI "$_ \n";	
+	}
+close (DATEI);
+
+
+
+
+######  PushBullet
+
+# API-Key von PushBullet
+#my $apikey = "o.4t7FEwSvxj8f6qmGDpSvIH0V9bafbFXv";
+
+#my $pb = WWW::PushBullet->new({apikey => $apikey});
+
+# Nachricht an Device versenden
+#$pb->push_note(
+#{
+#	device_id => $device_id,
+#	title     => 'Noten im QIS: '+keys(%daten),
+#	body      => keys(%daten)
+#	body => map { "$_ => $daten{$_}\n" } keys %daten
+#}
+#);
+
+
+
+
+
+
+
+
+
 
 
 #leerzeichen entfernen: $line =~ s/\s//g;
