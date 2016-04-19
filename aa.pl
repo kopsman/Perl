@@ -1,9 +1,9 @@
 #!/usr/local/perls/perl-5.20.0/bin/perl
 use Data::Dumper;
 
-my @Sachen = ("Mathe   ",1.3,"Physik  ", 1.0);
+my @Sachen = ("Mathe   ",1.3,"Physik  ", 1.0 );
 
-splice  @Sachen, -1;
+#splice  @Sachen, -1;
 
 print Dumper @Sachen;
 
@@ -17,7 +17,7 @@ print Dumper @Sachen;
 #    print $reference."\n";
 
 %hash = @Sachen;
-print Dumer \%hash;   
+print Dumper \%hash;   
 
     
 #$eingabe = "feldname1=wert1&feldname2=wert2&feldname3=wert3";
@@ -35,4 +35,3 @@ print Dumer \%hash;
 #}
 
 
-print Dumper \%hash;
