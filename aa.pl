@@ -1,11 +1,22 @@
 #!/usr/local/perls/perl-5.20.0/bin/perl
 use Data::Dumper;
+use warnings;
+use strict;
+
+
 
 my @Sachen = ("Mathe   ",1.3,"Physik  ", 1.0 );
 
+
+my @names = ("John Paul", "Lisa", "Kumar");
+
+print "das ist ein Test","$#names"+1;
+
+
+
 #splice  @Sachen, -1;
 
-print Dumper @Sachen;
+#print Dumper @Sachen;
 
 #foreach (@Sachen) {
 #  $_ =~ s/\s//g;
@@ -16,8 +27,8 @@ print Dumper @Sachen;
 #    my $reference = @array;
 #    print $reference."\n";
 
-%hash = @Sachen;
-print Dumper \%hash;   
+#%hash = @Sachen;
+#print Dumper \%hash;   
 
     
 #$eingabe = "feldname1=wert1&feldname2=wert2&feldname3=wert3";

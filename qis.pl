@@ -8,7 +8,6 @@ use HTML::TableExtract;
 use Data::Dumper;
 use WWW::PushBullet;
     
- 
 
 my $mech = WWW::Mechanize->new();
 
@@ -32,28 +31,21 @@ print "Notenspiegel gefunden...\n";
 
 # 1. Link, dessen URL 'download' enthält.
 $mech->follow_link(text_regex => qr/Abschluss MA Master of Engineering anzeigen/i);
-print "'Info'-Feld gefunden...\n\n\n\n";
+print "'Info'-Feld gefunden...\n";
 
 $te = HTML::TableExtract->new( headers => [qw(Prüfungstext Note)]  );
 $te->parse(  $mech->content( decoded_by_headers => 1 )  );
 
- # Examine all matching tables
-#@ar = $te;
-# print Dumper \@ar;
 
 my @list;
 
 foreach my $ts ($te->tables) {
-#  print "Table (", join(',', $ts->coords), "):\n";
-#  print "HIER1\n";
+
   foreach my $zeile ($ts->rows) {
-#  	print "\n";
-  	
-     #print join(',', @$row), "\n";
-     foreach my $eintrag (@$zeile){
+
+     foreach my $eintrag (@$zeile) {
      	
      	$eintrag =~ s/\s//g; #Leerzeichen entfernen
-#     	print ":  ".$eintrag;
      	
      	push(@list, $eintrag);
      	
@@ -61,85 +53,95 @@ foreach my $ts ($te->tables) {
   }
 }
 
-#print Dumper @list;
+###### Bereinigung des Arrays
 @list = @list[4 .. $#list];
 splice @list, -2;
 
-#TEST ->neues Modul on Hand hinzufügen!!!
-
-
-#print join("\n", @list[3..$#list]), $/;
-
-
-
 my %daten = @list;
-#Anzahl der Hasheinträge
-my $numKeys = keys(%daten);
-my @Keys = keys(%daten);
-#print "Hash: \n\n\n\n\n";
-#print Dumper \%daten;
-print "Anzahl Einträge: $numKeys \n";
-#print "@list";
-#print $daten{"IT-Projektmanagement"};
-
-#sub del_double{
-#my %all=();
-#@all{@_}=1;
-#return (keys %all);
-#}
-
-#@l2=&del_double(@l);
 
 
+#Anzahl der Hasheinträge aus dem Online Formular
+my $numOnline = keys(%daten);
+print "Einträge Online (Hash): $numOnline \n";
+
+	#Zur initialen Befüllung...
+	#my @Keys = keys(%daten);
+	#open (DATEI, ">D:/Data/Unterlagen/STUDIUM/Perl/qis_old.txt") or die $!;
+	#	foreach (@Keys){
+	#		print DATEI "$_ \n";	
+	#	}
+	#close (DATEI);
 
 
-foreach (@Keys){
-	print "Exists: $_ - $daten{$_}\n" if exists $daten{$_};	
+	#TEST ->neues Modul on Hand hinzufügen!!!
+	#$daten{'Test_Eintrag'} = "5,0";
+	#$numOnline = keys(%daten);
+	#print "Einträge Online (Hash): $numOnline \n";
+
+
+############### Noten aus txt-file lesen
+#open (DATEI, "/Users/manni/Documents/qis_old.txt") or die $!;
+open (DATEI, "D:/Data/Unterlagen/STUDIUM/Perl/qis_old.txt") or die $!;
+	my @old_daten = <DATEI>;
+	close (DATEI);
+my $numFile = $#old_daten+1; # +1 weil Array bei 0 beginnt
+
+print "Einträge Datei - ","$#old_daten"+1,"\n";
+#	foreach (@old_daten){
+#		print "$_";	
+#	}
+##################################################
+
+if ($numFile != $numOnline) {
+	
+###############  PushBullet
+
+# API-Key von PushBullet
+	my $apikey = "o.4t7FEwSvxj8f6qmGDpSvIH0V9bafbFXv";
+	
+	my $pb = WWW::PushBullet->new({apikey => $apikey});
+
+# Nachricht an Device versenden
+	$pb->push_note(
+		{
+			#device_id => $device_id,
+			title     => 'Noten im QIS',
+			body      => ''
+		}
+	);
+	
+	
+	foreach ( keys %daten )  {
+		$pb->push_note(
+			{
+				#device_id => $device_id,
+				title     => $_,
+				body      => $daten{$_}
+			}
+		);
+		
+	}
+		
 }
 
-#print "\n\n";
 
-#foreach (@l2){
-#	print "$_ \n";	
-#}
-
-# Noten aus txt-file lesen
-#open (DATEI, "/Users/manni/Documents/qis_old.txt") or die $!;
-#   my @old_daten = <DATEI>;
-#close (DATEI);
-
-#print Dumper @old_daten; 
-
-
-
-# Noten in txt-file schreiben
-open (DATEI, ">/Users/manni/Documents/qis_old.txt") or die $!;
-   #print DATEI map { "$_ => $daten{$_}\n" } keys %daten;
-   #print DATEI @keys;
+###############  PushBullet# Noten in txt-file schreiben
+my @Keys = keys(%daten);
+open (DATEI, ">D:/Data/Unterlagen/STUDIUM/Perl/qis_old.txt") or die $!;
 	foreach (@Keys){
 		print DATEI "$_ \n";	
 	}
 close (DATEI);
 
-
-
-
-######  PushBullet
-
-# API-Key von PushBullet
-#my $apikey = "o.4t7FEwSvxj8f6qmGDpSvIH0V9bafbFXv";
-
-#my $pb = WWW::PushBullet->new({apikey => $apikey});
-
-# Nachricht an Device versenden
-#$pb->push_note(
-#{
-#	device_id => $device_id,
-#	title     => 'Noten im QIS: '+keys(%daten),
-#	body      => keys(%daten)
-#	body => map { "$_ => $daten{$_}\n" } keys %daten
-#}
-#);
+# Noten in txt-file schreiben
+#open (DATEI, ">/Users/manni/Documents/qis_old.txt") or die $!;
+#open (DATEI, ">D:/Data/Unterlagen/STUDIUM/Perl/qis_old.txt") or die $!;
+#   #print DATEI map { "$_ => $daten{$_}\n" } keys %daten;
+#   #print DATEI @Keys;
+#	foreach (@Keys){
+#		print DATEI "$_ \n";	
+#	}
+#close (DATEI);
 
 
 
@@ -150,26 +152,3 @@ close (DATEI);
 
 
 
-
-#leerzeichen entfernen: $line =~ s/\s//g;
-#title="Leistungen für Abschluss MA Master of Engineering anzeigen"
-
-# Links finden und anzeigen
-#my @links = $mech->links();
-#foreach my $link (@links) {
-#	print $link->url() , "\n";
-#	print $link->url_abs()  , "\n"; 
-#	print $link->text()  , "\n";
-#	print  "\n\n\n";
-#}
-
-# Formulare auf der Seite ermitteln
-#my @formulare = $mech->forms();
-#foreach my $formular ( @formulare ) {
-# $formular ist ein Object der Klasse HTML::Form
-#print $formular->dump(), "\n";
-#}
-
-#Kompletten HTML-Content anzeigen
-#my $content = $mech->content(decoded_by_headers => 1);
-# print $content;
