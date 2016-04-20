@@ -6,9 +6,7 @@ use WWW::Mechanize;
 use LWP::UserAgent;
 use HTML::TableExtract;
 use Data::Dumper;
-use WWW::PushBullet;
-    
- 
+use WWW::PushBullet; 
 
 my $mech = WWW::Mechanize->new();
 
