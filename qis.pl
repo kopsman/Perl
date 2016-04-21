@@ -21,6 +21,7 @@ BEGIN {$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;}
 $mech->field('asdf', $bn);
 $mech->field('fdsa', $pw);
 $mech->submit();
+#asdfasdf
 
 # 3. Link, der mit 'download' beschriftet ist
 $mech->follow_link( text_regex => qr/fungsverwaltung/i, n => 1 );
